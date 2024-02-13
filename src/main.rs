@@ -14,16 +14,17 @@ fn main() {
         .empty((4, 10))
         .empty((4, 11))
         .build();
+    //Crop::builder(6, 3)/*.empty((2, 2))*/.build();
     let improved = trainer::CropTrainer::improve(
         &crop,
-        2000,
-        3,
+        3000,
+        2,
         1.0,
         trainer::TrainerParams {
             elite: 0.2,
-            survivors: 0.5,
+            survivors: 0.55,
         },
-        120,
+        500,
     );
 
     //improved.print_rows()
