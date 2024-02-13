@@ -16,14 +16,14 @@ fn main() {
         .build();
     let improved = trainer::CropTrainer::improve(
         &crop,
-        5000,
-        2,
+        2000,
+        3,
         1.0,
         trainer::TrainerParams {
             elite: 0.2,
             survivors: 0.5,
         },
-        60,
+        120,
     );
 
     //improved.print_rows()

@@ -1,6 +1,7 @@
 use crate::crop::{self, Crop, CropBuilderChange};
 use rand::seq::SliceRandom;
 use rand::Rng;
+use rayon::prelude::*;
 
 #[derive(Clone)]
 pub struct Genome {
@@ -161,7 +162,7 @@ impl CropTrainer {
     }
 
     fn sort(&mut self) {
-        self.population.sort_by_key(|genome| -genome.score())
+        self.population.par_sort_by_key(|genome| -genome.score())
     }
 
     fn cutoff_index(&self, cutoff: f32) -> usize {
@@ -184,6 +185,7 @@ impl CropTrainer {
         let cutoff = self.cutoff_index(self.params.elite);
         let upper_cutoff = self.cutoff_index(self.params.survivors) - cutoff;
         let bred = (0..upper_cutoff)
+            .into_par_iter()
             .map(|_| self.new_breed(cutoff))
             .collect::<Vec<Genome>>();
         self.population[cutoff..cutoff + upper_cutoff].clone_from_slice(&bred);
@@ -195,6 +197,7 @@ impl CropTrainer {
         let full_len = self.population.len();
 
         let randoms = (cutoff..self.population.len())
+            .into_par_iter()
             .map(|_| self.make_random_genome())
             .collect::<Vec<Genome>>();
         self.population[cutoff..full_len].clone_from_slice(&randoms);
