@@ -224,7 +224,10 @@ impl CropTrainer {
 
         for i in 1..=iterations {
             trainer.step();
-            println!("Generation {} best score {}", i, trainer.best().score())
+            let best = trainer.best();
+            println!("Generation {} best score {}", i, best.score());
+            best.generate().print_rows();
+            println!("----")
         }
 
         trainer.best().generate()

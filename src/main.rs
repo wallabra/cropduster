@@ -14,8 +14,8 @@ fn main() {
             elite: 0.2,
             survivors: 0.5,
         },
-        10000,
+        40,
     );
 
-    improved.print_rows()
+    //improved.print_rows()
 }
