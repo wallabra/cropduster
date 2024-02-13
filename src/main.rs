@@ -4,16 +4,7 @@ pub mod trainer;
 use crop::Crop;
 
 fn main() {
-    let crop = Crop::builder(9, 16)
-        .empty((4, 4))
-        .empty((4, 5))
-        .empty((4, 6))
-        .empty((4, 7))
-        .empty((4, 8))
-        .empty((4, 9))
-        .empty((4, 10))
-        .empty((4, 11))
-        .build();
+    let crop = Crop::builder(9, 16).empty((4, 4)).empty((4, 11)).build();
     //Crop::builder(6, 3)/*.empty((2, 2))*/.build();
     let improved = trainer::CropTrainer::improve(
         &crop,
