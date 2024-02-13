@@ -14,5 +14,5 @@ inbetweens are mutated (one extra change added).
 See `src/main.rs` to see and edit the parameters, then do:
 
 ```
-$cargo run --release
+$ cargo run --release
 ```
