@@ -226,11 +226,16 @@ impl CropTrainer {
         let mut trainer = Self::new(from, population, num_croptypes, randomized, params);
 
         for i in 1..=iterations {
+            println!("----");
             trainer.step();
             let best = trainer.best();
             println!("Generation {} best score {}", i, best.score());
             best.generate().print_rows();
-            println!("----")
+
+            if best.score() == 0 {
+                // Found the best
+                break;
+            }
         }
 
         trainer.best().generate()
