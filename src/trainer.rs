@@ -28,6 +28,21 @@ impl Genome {
         new_crop
     }
 
+    pub fn breed(a: &Self, b: &Self) -> Self {
+        let mut res = a.clone();
+        res.changes.clear();
+
+        let mut new_changes = [a.changes.clone(), b.changes.clone()].concat();
+        let total_changes = new_changes.len();
+        new_changes = new_changes
+            .choose_multiple(&mut rand::thread_rng(), total_changes / 2)
+            .cloned()
+            .collect::<Vec<_>>();
+
+        res.changes = new_changes;
+        res
+    }
+
     pub fn score(&self) -> i32 {
         let crop = self.generate();
         let mut score = 0;
@@ -151,15 +166,25 @@ impl CropTrainer {
         (cutoff * self.population.len() as f32) as usize
     }
 
+    fn new_breed(&self, cutoff: usize) -> Genome {
+        let parents = &self.population[..cutoff];
+        let parents = parents
+            .choose_multiple(&mut rand::thread_rng(), 2)
+            .collect::<Vec<_>>();
+
+        Genome::breed(parents[0], parents[1])
+    }
+
     pub fn mutate(&mut self) {
         self.sort();
 
         // Mutate only non-elite
         let cutoff = self.cutoff_index(self.params.elite);
         let upper_cutoff = self.cutoff_index(self.params.survivors) - cutoff;
-        for genome in self.population.iter_mut().skip(cutoff).take(upper_cutoff) {
-            genome.mutate();
-        }
+        let bred = (0..upper_cutoff)
+            .map(|_| self.new_breed(cutoff))
+            .collect::<Vec<Genome>>();
+        self.population[cutoff..cutoff + upper_cutoff].clone_from_slice(&bred);
     }
 
     pub fn repopulate_lumpen(&mut self) {
