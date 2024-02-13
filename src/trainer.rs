@@ -54,10 +54,10 @@ impl Genome {
                     if crop.axially_stunted((x as isize, y as isize))
                         || crop.diagonal_neighbours((x as isize, y as isize)) != 0
                     {
-                        score -= 32;
+                        score -= 1;
                     }
 
-                    score -= 8 - crop.farmland_neighbours((x as isize, y as isize)) as i32;
+                    /*score -= 8 - crop.farmland_neighbours((x as isize, y as isize)) as i32;*/
                 }
             }
         }
