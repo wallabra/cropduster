@@ -45,6 +45,79 @@ impl Crop {
             .sum()
     }
 
+    pub fn farmland_neighbours(&self, xy: (isize, isize)) -> u8 {
+        let coords = [
+            (-1, 0),
+            (1, 0),
+            (0, -1),
+            (0, 1),
+            (-1, -1),
+            (-1, 1),
+            (1, -1),
+            (1, 1),
+        ]
+        .iter()
+        .map(|c| (xy.0 + c.0, xy.1 + c.1));
+
+        coords
+            .map(|c| {
+                if !self.has_coord(c) {
+                    0
+                } else {
+                    *self.grid.get(c.1 as usize, c.0 as usize).unwrap_or(&0)
+                }
+            })
+            .map(|x| (x != 0) as u8)
+            .sum()
+    }
+
+    pub fn axially_stunted(&self, xy: (isize, isize)) -> bool {
+        let crop_match = self.grid[(xy.1 as usize, xy.0 as usize)];
+
+        let coords_on_x = [(-1, 0), (1, 0)]
+            .iter()
+            .map(|c| (xy.0 + c.0, xy.1 + c.1))
+            .collect::<Vec<_>>();
+        let coords_on_y = [(-1, 0), (1, 0)]
+            .iter()
+            .map(|c| (xy.0 + c.0, xy.1 + c.1))
+            .collect::<Vec<_>>();
+
+        let results: [u8; 2] = [coords_on_x, coords_on_y].map(|coords| {
+            coords
+                .iter()
+                .map(|&c| {
+                    if !self.has_coord(c) {
+                        0
+                    } else {
+                        *self.grid.get(c.1 as usize, c.0 as usize).unwrap_or(&0)
+                    }
+                })
+                .map(|x| (x == crop_match) as u8)
+                .sum()
+        });
+
+        results[0] != 0 && results[1] != 1
+    }
+
+    pub fn diagonal_neighbours(&self, xy: (isize, isize)) -> u8 {
+        let crop_match = self.grid[(xy.1 as usize, xy.0 as usize)];
+        let coords = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+            .iter()
+            .map(|c| (xy.0 + c.0, xy.1 + c.1));
+
+        coords
+            .map(|c| {
+                if !self.has_coord(c) {
+                    0
+                } else {
+                    *self.grid.get(c.1 as usize, c.0 as usize).unwrap_or(&0)
+                }
+            })
+            .map(|x| (x == crop_match) as u8)
+            .sum()
+    }
+
     pub fn print_rows(&self) {
         for row in self.grid.rows_iter() {
             println!(

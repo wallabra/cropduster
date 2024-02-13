@@ -45,16 +45,18 @@ impl Genome {
 
     pub fn score(&self) -> i32 {
         let crop = self.generate();
-        let mut score = 0;
+        let mut score: i32 = 0;
 
         for y in 0..crop.grid.column_len() {
             for x in 0..crop.grid.row_len() {
                 if crop.grid[(y, x)] != 0 {
-                    let neighbours = crop.crop_neighbours((x as isize, y as isize));
-
-                    if neighbours != 2 {
-                        score -= 1;
+                    if crop.axially_stunted((x as isize, y as isize))
+                        || crop.diagonal_neighbours((x as isize, y as isize)) != 0
+                    {
+                        score -= 32;
                     }
+
+                    score -= 8 - crop.farmland_neighbours((x as isize, y as isize)) as i32;
                 }
             }
         }
